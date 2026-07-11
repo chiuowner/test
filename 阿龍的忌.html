@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>忌宮專論 — 紫微斗數四化忌解析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Ma+Shan+Zheng&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0C0E1C;          /* lacquered night ground */
+    --ink-2:#12152A;        /* panel */
+    --ink-3:#1A1E38;        /* raised panel */
+    --line:#2A2F52;         /* hairline */
+    --gilt:#C9A96A;         /* muted old gold */
+    --gilt-dim:#8E7A4E;     /* dim gold */
+    --paper:#E7E0D0;        /* aged ink-on-paper text */
+    --paper-dim:#A9A290;    /* secondary text */
+    --cinnabar:#CF3A2C;     /* 朱砂 — the 忌 red */
+    --cinnabar-deep:#8E2318;
+    --violet:#7E6BB0;       /* 紫微 accent */
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 700px at 78% -8%, rgba(126,107,176,.16), transparent 60%),
+      radial-gradient(900px 600px at 8% 12%, rgba(207,58,44,.07), transparent 55%),
+      var(--ink);
+    color:var(--paper);
+    font-family:"Noto Serif TC", serif;
+    font-weight:400;
+    line-height:1.9;
+    letter-spacing:.02em;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* faint star specks — 紫微 = purple star */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(1.4px 1.4px at 20% 30%, rgba(201,169,106,.5), transparent),
+      radial-gradient(1.2px 1.2px at 67% 18%, rgba(231,224,208,.4), transparent),
+      radial-gradient(1px 1px at 42% 62%, rgba(201,169,106,.35), transparent),
+      radial-gradient(1.3px 1.3px at 85% 48%, rgba(231,224,208,.3), transparent),
+      radial-gradient(1px 1px at 12% 78%, rgba(201,169,106,.3), transparent),
+      radial-gradient(1.1px 1.1px at 90% 82%, rgba(231,224,208,.25), transparent);
+    opacity:.7;
+  }
+
+  .wrap{position:relative; z-index:1; max-width:920px; margin:0 auto; padding:0 26px;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    min-height:78vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:70px 0 48px;
+    position:relative;
+  }
+  .eyebrow{
+    font-family:"Noto Sans TC", sans-serif;
+    font-weight:500; font-size:.78rem; letter-spacing:.55em;
+    color:var(--gilt-dim); text-indent:.55em; margin-bottom:26px;
+  }
+  .hero-mark{
+    position:relative;
+    display:flex; align-items:center; gap:min(6vw,54px);
+    margin:6px 0 18px;
+  }
+  .brush{
+    font-family:"Ma Shan Zheng", "Noto Serif TC", serif;
+    font-size:clamp(8rem,26vw,15rem);
+    line-height:.82;
+    color:var(--cinnabar);
+    text-shadow:0 0 44px rgba(207,58,44,.35);
+    position:relative;
+    flex:none;
+  }
+  /* seal ring behind the brush 忌 */
+  .brush::after{
+    content:"";
+    position:absolute; inset:-14% -14% -8% -14%;
+    border:2px solid var(--cinnabar-deep);
+    border-radius:14px;
+    opacity:.35;
+    mix-blend-mode:screen;
+  }
+  .hero-title h1{
+    font-size:clamp(2rem,5.4vw,3.1rem);
+    font-weight:900; letter-spacing:.06em;
+    margin:0 0 14px; color:var(--paper);
+  }
+  .hero-title h1 .sub{ color:var(--gilt); }
+  .hero-title p{
+    margin:0; max-width:34ch;
+    color:var(--paper-dim); font-size:1.02rem; line-height:1.85;
+  }
+  .hero-meta{
+    display:flex; flex-wrap:wrap; gap:10px 22px;
+    margin-top:34px; padding-top:22px;
+    border-top:1px solid var(--line);
+    font-family:"Noto Sans TC", sans-serif; font-size:.82rem;
+    color:var(--paper-dim);
+  }
+  .hero-meta b{ color:var(--gilt); font-weight:500; }
+
+  /* ---------- SECTION FRAME ---------- */
+  section{ padding:52px 0; position:relative; }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:30px; }
+  .sec-num{
+    font-family:"Noto Sans TC", sans-serif; font-weight:700;
+    font-size:.82rem; letter-spacing:.2em; color:var(--cinnabar);
+    border:1px solid var(--cinnabar-deep); border-radius:4px;
+    padding:3px 9px; flex:none; margin-top:6px;
+  }
+  .sec-head h2{
+    font-size:clamp(1.5rem,3.4vw,2rem); font-weight:700;
+    letter-spacing:.04em; margin:0; color:var(--paper);
+  }
+  .sec-head h2 small{
+    display:block; font-size:.82rem; font-weight:400; letter-spacing:.24em;
+    color:var(--gilt-dim); margin-top:8px;
+    font-family:"Noto Sans TC", sans-serif;
+  }
+  .lead{ color:var(--paper-dim); max-width:60ch; margin:0 0 8px; }
+
+  /* ---------- 忌 seal chip ---------- */
+  .ji{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:1.5em; height:1.5em; margin:0 .12em; vertical-align:-.28em;
+    background:var(--cinnabar); color:#fff; font-weight:700;
+    border-radius:4px; font-size:.72em; box-shadow:0 0 0 2px rgba(142,35,24,.5);
+  }
+
+  /* ---------- overview: three kinds of 忌 ---------- */
+  .kinds{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .kind{
+    background:linear-gradient(180deg, var(--ink-3), var(--ink-2));
+    border:1px solid var(--line); border-radius:12px;
+    padding:22px 20px; position:relative; overflow:hidden;
+  }
+  .kind .tag{
+    font-family:"Noto Sans TC", sans-serif; font-size:.7rem;
+    letter-spacing:.24em; color:var(--cinnabar);
+  }
+  .kind h3{ font-size:1.15rem; margin:8px 0 4px; letter-spacing:.05em; }
+  .kind .where{ color:var(--gilt); font-size:.9rem; font-weight:500; }
+  .kind p{ font-size:.9rem; color:var(--paper-dim); margin:12px 0 0; line-height:1.8; }
+
+  /* ---------- palace cards ---------- */
+  .palace{
+    background:linear-gradient(180deg, rgba(26,30,56,.55), rgba(18,21,42,.55));
+    border:1px solid var(--line); border-left:3px solid var(--cinnabar);
+    border-radius:12px; padding:30px 30px 26px; margin-bottom:22px;
+    position:relative;
+  }
+  .palace .pnum{
+    position:absolute; top:22px; right:26px;
+    font-family:"Ma Shan Zheng", serif; font-size:2.6rem;
+    color:var(--line); line-height:1;
+  }
+  .palace h3{
+    font-size:1.35rem; margin:0 0 4px; letter-spacing:.04em; color:var(--paper);
+  }
+  .palace .stars{
+    font-family:"Noto Sans TC", sans-serif; font-size:.86rem;
+    color:var(--gilt); margin-bottom:16px; letter-spacing:.02em;
+  }
+  .palace p{ margin:0 0 14px; }
+  .palace p:last-child{ margin-bottom:0; }
+  .fix{
+    background:rgba(207,58,44,.08);
+    border:1px solid rgba(207,58,44,.28);
+    border-radius:8px; padding:14px 16px; margin-top:6px;
+  }
+  .fix b{ color:var(--cinnabar); font-weight:600; }
+  em.hl{ color:var(--gilt); font-style:normal; font-weight:500; }
+  strong.on{ color:var(--paper); font-weight:600; }
+
+  /* ---------- 忌串 flow ---------- */
+  .flow-wrap{
+    background:var(--ink-2); border:1px solid var(--line);
+    border-radius:14px; padding:30px 24px;
+  }
+  .flow{ display:flex; flex-wrap:wrap; align-items:stretch; gap:0; }
+  .node{
+    flex:1 1 0; min-width:118px;
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    padding:6px 4px;
+  }
+  .node .dot{
+    width:58px; height:58px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.05rem; font-weight:700; letter-spacing:.02em;
+    background:radial-gradient(circle at 34% 30%, var(--ink-3), #0A0C18);
+    border:1px solid var(--line); color:var(--paper); margin-bottom:10px;
+  }
+  .node.end .dot{
+    border-color:var(--cinnabar); color:#fff;
+    background:radial-gradient(circle at 34% 30%, var(--cinnabar), var(--cinnabar-deep));
+    box-shadow:0 0 26px rgba(207,58,44,.4);
+  }
+  .node .fly{
+    font-family:"Noto Sans TC", sans-serif; font-size:.72rem;
+    color:var(--cinnabar); letter-spacing:.08em;
+  }
+  .node .plc{ font-size:.82rem; color:var(--paper-dim); margin-top:2px;}
+  .arrow{
+    align-self:center; color:var(--gilt-dim); font-size:1.2rem;
+    padding:0 2px; margin-bottom:34px; flex:none;
+  }
+  .flow-note{
+    margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:.94rem; color:var(--paper-dim);
+  }
+  .flow-note b{ color:var(--gilt); font-weight:600; }
+  .branch{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; }
+  .branch span{
+    font-family:"Noto Sans TC", sans-serif; font-size:.82rem;
+    background:var(--ink-3); border:1px solid var(--line);
+    border-radius:20px; padding:6px 14px; color:var(--paper-dim);
+  }
+  .branch b{ color:var(--cinnabar); font-weight:600; }
+
+  /* ---------- timeline ---------- */
+  .timeline{ position:relative; margin-top:10px; padding-left:26px; }
+  .timeline::before{
+    content:""; position:absolute; left:6px; top:6px; bottom:6px;
+    width:2px; background:linear-gradient(180deg,var(--cinnabar),var(--gilt-dim),transparent);
+  }
+  .tl-item{ position:relative; padding:0 0 26px 8px; }
+  .tl-item::before{
+    content:""; position:absolute; left:-25px; top:8px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--ink); border:2px solid var(--gilt);
+  }
+  .tl-item.peril::before{ border-color:var(--cinnabar); background:var(--cinnabar);}
+  .tl-when{
+    font-family:"Noto Sans TC", sans-serif; font-weight:700;
+    font-size:.92rem; color:var(--gilt); letter-spacing:.02em;
+  }
+  .tl-item.peril .tl-when{ color:var(--cinnabar); }
+  .tl-body{ color:var(--paper-dim); font-size:.96rem; margin-top:4px; }
+  .badge{
+    display:inline-block; font-family:"Noto Sans TC",sans-serif;
+    font-size:.68rem; letter-spacing:.1em; padding:2px 8px; border-radius:3px;
+    margin-left:8px; vertical-align:.1em;
+  }
+  .badge.bad{ background:rgba(207,58,44,.18); color:#F1897E; border:1px solid rgba(207,58,44,.4);}
+  .badge.mix{ background:rgba(201,169,106,.15); color:var(--gilt); border:1px solid var(--gilt-dim);}
+
+  /* ---------- resolution ---------- */
+  .fixes{ counter-reset:fix; display:grid; gap:14px; }
+  .fixrow{
+    display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:start;
+    background:var(--ink-2); border:1px solid var(--line);
+    border-radius:10px; padding:18px 20px;
+  }
+  .fixrow::before{
+    counter-increment:fix; content:counter(fix,cjk-decimal);
+    font-family:"Ma Shan Zheng", serif; font-size:1.7rem; line-height:1;
+    color:var(--cinnabar); min-width:1.4em; text-align:center;
+  }
+  .fixrow h4{ margin:2px 0 5px; font-size:1.05rem; letter-spacing:.04em; color:var(--paper);}
+  .fixrow p{ margin:0; font-size:.94rem; color:var(--paper-dim); }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--line); margin-top:24px;
+    padding:34px 0 70px; color:var(--paper-dim); font-size:.86rem; line-height:1.85;
+  }
+  footer .seal{
+    font-family:"Ma Shan Zheng", serif; color:var(--cinnabar);
+    font-size:1.4rem; display:inline-block; margin-bottom:12px;
+    border:2px solid var(--cinnabar-deep); border-radius:6px; padding:4px 12px;
+  }
+
+  a:focus-visible, .node:focus-visible{ outline:2px solid var(--gilt); outline-offset:3px; }
+
+  /* ---------- reveal ---------- */
+  .rise{ opacity:0; transform:translateY(22px); transition:opacity .7s ease, transform .7s ease; }
+  .rise.in{ opacity:1; transform:none; }
+
+  @media (max-width:720px){
+    .hero-mark{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .kinds{ grid-template-columns:1fr; }
+    .flow{ flex-direction:column; }
+    .node{ flex-direction:row; gap:14px; justify-content:flex-start; width:100%; min-width:0; text-align:left; padding:8px 0;}
+    .node .dot{ margin-bottom:0; }
+    .arrow{ transform:rotate(90deg); margin:2px 0 2px 22px; }
+    .palace{ padding:24px 20px; }
+    .palace .pnum{ font-size:2rem; top:18px; right:18px; }
+    .fixrow{ grid-template-columns:1fr; gap:8px; }
+    .fixrow::before{ text-align:left; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .rise{ opacity:1; transform:none; transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="eyebrow">紫微斗數 · 四化忌解析</div>
+    <div class="hero-mark">
+      <div class="brush" aria-hidden="true">忌</div>
+      <div class="hero-title">
+        <h1>忌宮專論<br><span class="sub">病根 · 執著 · 化解</span></h1>
+        <p>祿為福緣所聚，忌為病根所在。忌宮，往往正是一生反覆碰壁、最放不下、最需修煉之課題。</p>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>命主 <b>男</b></span>
+      <span>丙子年 <b>紫微破軍在丑</b></span>
+      <span>五行 <b>土五局</b></span>
+      <span>本盤忌落 <b>官祿 · 福德 · 夫妻 · 疾厄</b></span>
+    </div>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="sec-head rise">
+      <span class="sec-num">總覽</span>
+      <h2>三種忌的分布<small>SANZHONG JI</small></h2>
+    </div>
+    <p class="lead rise">本盤之忌結構集中而典型。四忌所落，恰對應「事業、精神、感情、身心」四大領域，可分三類來看。</p>
+    <div class="kinds">
+      <div class="kind rise">
+        <div class="tag">先天病根</div>
+        <h3>生年忌</h3>
+        <div class="where">丙年廉貞化忌 → 官祿宮</div>
+        <p>與生俱來的執著與罩門，是一生反覆返回的功課。</p>
+      </div>
+      <div class="kind rise">
+        <div class="tag">能量外漏 ↓</div>
+        <h3>離心自化忌</h3>
+        <div class="where">官祿貪狼 · 福德文昌 · 夫妻文曲</div>
+        <p>三處自化忌。能量往外漏、留不住——努力半天卻常有付諸東流之感。</p>
+      </div>
+      <div class="kind rise">
+        <div class="tag">對宮沖入 ↑</div>
+        <h3>向心忌沖</h3>
+        <div class="where">父母天同忌 → 沖 疾厄宮</div>
+        <p>由對宮化忌沖來，直擊身心系統這一罩門。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PALACES -->
+  <section id="palaces">
+    <div class="sec-head rise">
+      <span class="sec-num">逐宮</span>
+      <h2>四忌宮細剖<small>SI JI GONG</small></h2>
+    </div>
+
+    <div class="palace rise">
+      <div class="pnum">壹</div>
+      <h3>官祿宮 <span style="color:var(--gilt-dim);font-size:.7em;">癸巳</span> — 雙忌之地，全盤病根</h3>
+      <div class="stars">廉貞[陷]生年忌<span class="ji">忌</span> ＋ 貪狼[陷]離心自化忌<span class="ji">忌</span> ＋ 祿存[廟] ＋ 鈴星</div>
+      <p>全盤最重的忌宮，也是一生最大的功課。<strong class="on">廉貞生年忌</strong>是先天執著——命主對事業成就、名位、被認可有著根深柢固的渴求，放不下、易鑽牛角尖；落陷帶忌，主事業多是非、慾望糾纏、投入極深而回報波動。</p>
+      <p>同宮<strong class="on">貪狼再離心自化忌</strong>更關鍵：自化忌是「能量往外漏」，主目標常換、心血易付諸東流。生年忌（執著）＋自化忌（外漏）同坐，形成<em class="hl">「越想抓、越抓不住」</em>的拉扯——這正是殺破狼格大起大落在事業上的內在機制。</p>
+      <div class="fix">
+        <b>所幸與破解：</b>同宮有<em class="hl">祿存[廟]</em>為壓艙石，對宮又有<em class="hl">貪狼化權</em>沖入使慾望轉為實力。破解在「收斂目標、專注深耕」——以祿存的務實積累壓制自化忌的耗散，切忌貪多、頻繁轉向、孤注一擲。
+      </div>
+    </div>
+
+    <div class="palace rise">
+      <div class="pnum">貳</div>
+      <h3>福德宮 <span style="color:var(--gilt-dim);font-size:.7em;">辛卯 · 身宮</span> — 精神內耗之源</h3>
+      <div class="stars">文昌[利]生年科 ＋ 離心自化忌<span class="ji">忌</span>（科轉忌）</div>
+      <p>福德主精神、心性、福分厚薄，此宮又疊<strong class="on">身宮</strong>，份量加倍。文昌本為生年科（文采、名譽、清雅），卻在本宮離心自化忌——是命主精神層面最深的漏洞。</p>
+      <p>「科」轉「忌」，主<em class="hl">極重面子名聲，卻又常為此自我折磨</em>；想得太多、對文書契約與自我評價異常敏感。自化忌落福德，主福氣快樂容易自己漏掉——條件不差，內心卻難得安寧。與疾厄天同忌、命宮天空互為呼應，共構「想太多、耗心神」之體質。</p>
+      <div class="fix">
+        <b>破解在修心：</b>此為身宮，是終身修煉的主戰場。以福德天府（安穩）＋文昌（文雅）之正性，透過<em class="hl">閱讀、書法、文史、藝術與正念</em>安頓心神，把「文昌忌的鑽牛角尖」轉為「文昌科的專注沉靜」。
+      </div>
+    </div>
+
+    <div class="palace rise">
+      <div class="pnum">參</div>
+      <h3>夫妻宮 <span style="color:var(--gilt-dim);font-size:.7em;">己亥</span> — 感情能量外漏</h3>
+      <div class="stars">文曲[旺]離心自化忌<span class="ji">忌</span> ＋ 天魁 ＋ 天月；借官祿廉貞忌<span class="ji">忌</span>、貪狼忌<span class="ji">忌</span>入</div>
+      <p>夫妻無主星，借對宮官祿星曜，連帶把<strong class="on">廉貞忌、貪狼忌</strong>一併借入，本身又有<strong class="on">文曲自化忌</strong>，三忌交纏。文曲自化忌主溝通易生誤會、甜言蜜語留不住、婚事文書或有反覆；借入官祿雙忌，使<em class="hl">事業與感情互相牽動</em>。</p>
+      <div class="fix">
+        <b>亮點與破解：</b>天魁貴人星坐夫妻，主<em class="hl">配偶條件不錯、有貴氣或年長、能成助力</em>。宜擇務實能溝通、能包容其求變性格者，讓天魁壓過文曲的漂浮。桃花旺（紅鸞、天姚、咸池天喜）反成選項困擾，故務必專一、慢磨合、忌閃婚、宜晚婚。
+      </div>
+    </div>
+
+    <div class="palace rise">
+      <div class="pnum">肆</div>
+      <h3>疾厄宮 <span style="color:var(--gilt-dim);font-size:.7em;">丙申 · 來因宮</span> — 身心之忌</h3>
+      <div class="stars">天同[旺]生年祿 ＋ 離心自化祿 ＋ 對宮父母天同忌沖入<span class="ji">忌</span></div>
+      <p>情況特殊：既有生年祿、自化祿，又被對宮父母宮的天同忌強力沖入，且此宮是<strong class="on">來因宮</strong>（福分因緣源頭）。「祿隨自化外漏、忌又對沖而來」，祿忌交纏。</p>
+      <p>主命主體質底子不差、天性樂天（祿），但福氣易散、身心系統是罩門（忌沖）。天同為情緒、神經、內分泌之星，忌沖主<em class="hl">焦慮、失眠、精神耗弱、泌尿內分泌問題</em>，與福德文昌忌相互放大。來因宮又飛廉貞忌入官祿——暗示<strong class="on">身心狀態與事業深度綁定</strong>，事業一受挫，最先反映在睡眠與情緒。</p>
+    </div>
+  </section>
+
+  <!-- 忌串 FLOW -->
+  <section id="flow">
+    <div class="sec-head rise">
+      <span class="sec-num">飛星</span>
+      <h2>忌串 · 連環忌的總流向<small>FEIXING JICHUAN</small></h2>
+    </div>
+    <p class="lead rise">以各宮宮干飛忌追蹤，本盤忌氣有一條清晰的匯流線，終點正落在官祿宮。</p>
+    <div class="flow-wrap rise">
+      <div class="flow">
+        <div class="node"><div class="dot">財帛</div><div class="fly">巨門忌 ↓</div><div class="plc">起點</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node"><div class="dot">交友</div><div class="fly">太陽忌 ↓</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node"><div class="dot">子女</div><div class="fly">天機忌 ↓</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node"><div class="dot">兄弟</div><div class="fly">天同忌 ↓</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node"><div class="dot">疾厄</div><div class="fly">廉貞忌 ↓</div></div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="node end"><div class="dot">官祿</div><div class="fly">貪狼自化忌漏出</div><div class="plc">總樞紐</div></div>
+      </div>
+      <div class="flow-note">
+        意義明確：<b>金錢、人際、健康的種種糾纏，最終都匯聚承壓於「事業」這一宮</b>，而官祿的能量又容易自化漏失——這坐實了「官祿宮是本盤總樞紐、也是總病根」的判斷。
+        <div class="branch">
+          <span>支線一　命宮 <b>文昌忌</b> → 福德　（為心所困）</span>
+          <span>支線二　田宅 <b>武曲忌</b> → 財帛　（家用轉嫁現金流）</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timing">
+    <div class="sec-head rise">
+      <span class="sec-num">流年</span>
+      <h2>忌宮被引動的關鍵時段<small>YINDONG</small></h2>
+    </div>
+    <p class="lead rise">忌宮平時潛伏，逢大限流年引動時最見凶險，須特別留意。</p>
+    <div class="timeline rise">
+      <div class="tl-item peril">
+        <div class="tl-when">2026年 · 31虛歲 · 丙午<span class="badge bad">偏凶 · 較重</span></div>
+        <div class="tl-body">流年丙干使廉貞再化忌，與官祿生年忌形成<strong class="on">雙廉貞忌重疊</strong>——近年事業忌氣最重之年。嚴防事業是非、合約糾紛、投資失利、情緒血光。宜守，勿擴張投機。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">第3大限 · 25–34歲 · 辛卯<span class="badge mix">內耗 · 波動</span></div>
+        <div class="tl-body">大限文昌化忌，正引動福德文昌自化忌。逢進修考證、文書契約，精神壓力與文書反覆須防；亦是感情、身心波動較明顯的十年。</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-when">第4大限 · 35–44歲 · 壬辰<span class="badge mix">財險</span></div>
+        <div class="tl-body">大限武曲化忌沖財帛，與「田宅→財帛」忌串疊合——掌權擴張之時最防財務失控。</div>
+      </div>
+      <div class="tl-item peril">
+        <div class="tl-when">第5大限 · 45–54歲 · 癸巳（官祿本宮）<span class="badge bad">總決算</span></div>
+        <div class="tl-body">大限貪狼再化忌回官祿，與生年廉貞忌、自化貪狼忌<strong class="on">三忌齊聚</strong>——本命事業能量的總決算之限，成敗最烈，務須穩健守正。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOLUTION -->
+  <section id="resolve">
+    <div class="sec-head rise">
+      <span class="sec-num">化解</span>
+      <h2>針對忌宮的化解總綱<small>HUAJIE</small></h2>
+    </div>
+    <div class="fixes">
+      <div class="fixrow rise">
+        <div>
+          <h4>官祿雙忌 · 核心</h4>
+          <p>收斂慾望、專注一業，以祿存的務實積累壓制自化忌的耗散。忌頻繁轉向、貪多、孤注一擲；事業求「穩中求進、留後路」。</p>
+        </div>
+      </div>
+      <div class="fixrow rise">
+        <div>
+          <h4>福德身宮忌 · 心法</h4>
+          <p>命主終身修煉的主戰場。把文昌忌的「鑽牛角尖」轉為文昌科的「專注沉靜」，以閱讀、書法、藝術、正念安頓心神——修心即是修此宮。</p>
+        </div>
+      </div>
+      <div class="fixrow rise">
+        <div>
+          <h4>夫妻忌 · 感情</h4>
+          <p>善用天魁貴人緣，擇務實能溝通之偶；專一、慢磨合、忌閃婚、宜晚婚，可大減夫妻宮三忌之波折。</p>
+        </div>
+      </div>
+      <div class="fixrow rise">
+        <div>
+          <h4>疾厄忌 · 身心</h4>
+          <p>規律作息、忌熬夜（天同忌最怕失眠）；定期檢查神經精神、泌尿內分泌與脾胃；以運動釋放焦慮。</p>
+        </div>
+      </div>
+      <div class="fixrow rise">
+        <div>
+          <h4>忌串總向官祿的啟示</h4>
+          <p>金錢、人際、健康的忌氣最終都壓在事業上，故須把事業建立在可持續、抗風險的基礎上；並學會在事業受挫時先照顧身心——兩者在此盤是一體兩面。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="seal rise">忌</span>
+    <p class="rise">以上依紫微斗數四化理論（生年四化、自化、飛星飛忌）對盤面忌之結構所作推演，屬命理分析框架，用以認識個人課題與傾向，非決定論。所述時間與事件宜作「留意與準備」之參考，最終仍以命主的選擇與修為為主導。</p>
+  </footer>
+
+</div>
+
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.12 });
+  document.querySelectorAll('.rise').forEach((el,i)=>{
+    el.style.transitionDelay = Math.min(i%4*0.06, 0.18)+'s';
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>
