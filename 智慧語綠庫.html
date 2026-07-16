@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>智慧語錄收藏庫</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ===== 基礎設定 ===== */
+  :root{
+    --bg: #EDEAE0;           /* 宣紙暖灰 */
+    --card: #F7F5EE;         /* 米白紙面 */
+    --border: #DED9CB;
+    --ink: #3A3A34;          /* 墨色 */
+    --ink-2: #8A857A;        /* 淡墨 */
+    --accent: #6F7A5C;       /* 苔綠 / 竹青 */
+    --accent-d: #56603F;
+    --accent-soft: #E4E4D4;
+    --heart: #B5524A;        /* 朱紅（印泥） */
+    --pin: #B08A4E;          /* 赭黃 */
+    --shadow: 0 2px 12px rgba(80,78,64,.07);
+    --radius: 14px;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Serif TC", "Songti TC", "STSong", "SimSun", Georgia, serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 96px;
+  }
+  .wrap{ max-width: 600px; margin: 0 auto; padding: 0 16px; }
+
+  /* ===== 頁首 ===== */
+  header.app{
+    background: linear-gradient(165deg, #4B4A42 0%, #36352E 100%);
+    color:#F2EFE6;
+    padding: 26px 16px 22px;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+    box-shadow: 0 4px 18px rgba(50,48,40,.18);
+    position: relative;
+    overflow:hidden;
+  }
+  header.app::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px;
+    background: rgba(255,255,255,.08); border-radius:50%;
+  }
+  .app-title{ display:flex; align-items:center; gap:10px; font-size:1.5rem; font-weight:900; letter-spacing:2px; font-family: "Noto Serif TC", serif; }
+  .app-title .logo{ font-size:1.6rem; }
+  .app-sub{ font-size:.82rem; opacity:.9; margin-top:2px; }
+  .stats{ display:flex; gap:22px; margin-top:16px; }
+  .stat{ background:rgba(255,255,255,.16); border-radius:12px; padding:8px 14px; backdrop-filter: blur(2px); }
+  .stat b{ font-size:1.25rem; display:block; line-height:1.1; }
+  .stat span{ font-size:.72rem; opacity:.92; }
+
+  /* ===== 搜尋 ===== */
+  .search-box{ position:relative; margin-top:18px; }
+  .search-box input{
+    width:100%; border:1px solid var(--border); background:var(--card);
+    border-radius:14px; padding:13px 42px 13px 42px; font-size:1rem; color:var(--ink);
+    box-shadow: var(--shadow); outline:none;
+  }
+  .search-box input:focus{ border-color: var(--accent); }
+  .search-box .ic{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--ink-2); }
+  .search-box .clear{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    border:none; background:none; color:var(--ink-2); font-size:1.2rem; cursor:pointer; display:none; padding:4px;
+  }
+
+  /* ===== 分類/篩選 chips ===== */
+  .chips{
+    display:flex; gap:8px; overflow-x:auto; padding:16px 16px 4px; margin:0 -16px;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .chips::-webkit-scrollbar{ display:none; }
+  .chip{
+    flex:0 0 auto; border:1px solid var(--border); background:var(--card);
+    color:var(--ink); border-radius:999px; padding:7px 15px; font-size:.86rem;
+    cursor:pointer; white-space:nowrap; transition:.15s;
+  }
+  .chip.active{ background:var(--accent); color:#fff; border-color:var(--accent); font-weight:700; }
+  .chip.star.active{ background:var(--heart); border-color:var(--heart); }
+  .chip.manage{ background:var(--accent-soft); color:var(--accent-d); border-style:dashed; }
+
+  /* ===== 標籤篩選提示 ===== */
+  .tag-banner{
+    display:none; align-items:center; gap:8px; margin-top:12px;
+    background:var(--accent-soft); color:var(--accent-d);
+    padding:9px 14px; border-radius:12px; font-size:.9rem;
+  }
+  .tag-banner button{ margin-left:auto; border:none; background:none; color:var(--accent-d); font-size:1rem; cursor:pointer; }
+
+  /* ===== 區塊標題 ===== */
+  .section-title{ display:flex; align-items:center; gap:8px; font-size:1.02rem; font-weight:800; margin:22px 2px 12px; }
+  .section-title .count{ font-size:.78rem; font-weight:600; color:var(--ink-2); }
+
+  /* ===== 卡片 ===== */
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px; margin-bottom:14px; box-shadow: var(--shadow); position:relative;
+  }
+  .card.pinned{ border-color:var(--pin); box-shadow:0 2px 14px rgba(217,164,65,.22); }
+  .card-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .badge{
+    background:var(--accent-soft); color:var(--accent-d);
+    font-size:.74rem; font-weight:700; padding:4px 11px; border-radius:999px;
+    display:inline-flex; align-items:center; gap:5px;
+  }
+  .pin-flag{ color:var(--pin); font-size:.74rem; font-weight:700; margin-left:6px; }
+  .card-actions{ display:flex; gap:4px; }
+  .icon-btn{
+    border:none; background:none; cursor:pointer; font-size:1.15rem; padding:4px 6px;
+    line-height:1; border-radius:8px; filter:grayscale(1) opacity(.55); transition:.15s;
+  }
+  .icon-btn.on{ filter:none; }
+  .quote{
+    font-size:1.28rem; font-weight:700; color:var(--ink); margin:2px 0 8px;
+    font-family: "Noto Serif TC", "Songti TC", serif; line-height:1.5;
+  }
+  .note{ font-size:.95rem; color:#4a453f; margin:0 0 10px; }
+  .reflection{
+    background:#EAE9DB; border-left:3px solid var(--accent); border-radius:8px;
+    padding:8px 12px; font-size:.88rem; color:#6b5a44; margin:0 0 10px;
+  }
+  .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .tag{
+    background:#E4E4D4; color:var(--accent-d); font-size:.78rem; padding:3px 10px;
+    border-radius:999px; cursor:pointer; transition:.15s;
+  }
+  .tag:hover{ background:var(--accent); color:#fff; }
+  .meta{ font-size:.78rem; color:var(--ink-2); display:flex; flex-wrap:wrap; gap:4px 12px; }
+  .meta .m span{ opacity:.7; }
+  .card-foot{ display:flex; gap:8px; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border); }
+  .card-foot button{
+    flex:1; border:1px solid var(--border); background:var(--bg); color:var(--ink);
+    border-radius:10px; padding:8px; font-size:.85rem; cursor:pointer; transition:.15s;
+  }
+  .card-foot button.del{ color:var(--heart); }
+  .card-foot button:active{ transform:scale(.97); }
+
+  /* ===== 空狀態 ===== */
+  .empty{ text-align:center; color:var(--ink-2); padding:50px 20px; }
+  .empty .em{ font-size:2.6rem; display:block; margin-bottom:10px; }
+
+  /* ===== 浮動新增鈕 ===== */
+  .fab{
+    position:fixed; right:calc(50% - 300px + 20px); bottom:24px; z-index:40;
+    width:58px; height:58px; border-radius:50%; border:none;
+    background:var(--accent); color:#fff; font-size:1.9rem; line-height:1;
+    box-shadow:0 6px 18px rgba(160,116,60,.4); cursor:pointer; transition:.15s;
+  }
+  @media(max-width:640px){ .fab{ right:20px; } }
+  .fab:active{ transform:scale(.92); }
+
+  /* ===== Modal ===== */
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(46,42,38,.5); z-index:50;
+    align-items:flex-end; justify-content:center; padding:0;
+  }
+  .overlay.show{ display:flex; }
+  .sheet{
+    background:var(--bg); width:100%; max-width:600px; max-height:92vh; overflow-y:auto;
+    border-top-left-radius:22px; border-top-right-radius:22px; padding:18px 18px 30px;
+    animation: up .25s ease;
+  }
+  @keyframes up{ from{ transform:translateY(30px); opacity:.6; } to{ transform:translateY(0); opacity:1; } }
+  .sheet-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .sheet-head h2{ font-size:1.15rem; margin:0; }
+  .sheet-head .x{ border:none; background:none; font-size:1.5rem; color:var(--ink-2); cursor:pointer; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:.85rem; font-weight:700; margin-bottom:6px; color:#5b544c; }
+  .field label .req{ color:var(--heart); }
+  .field input[type=text], .field textarea, .field select, .field input[type=date]{
+    width:100%; border:1px solid var(--border); background:var(--card); border-radius:12px;
+    padding:11px 13px; font-size:1rem; color:var(--ink); outline:none; font-family:inherit;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{ border-color:var(--accent); }
+  .field textarea{ resize:vertical; min-height:62px; }
+  .row2{ display:flex; gap:10px; }
+  .row2 .field{ flex:1; }
+  .switch-row{ display:flex; gap:10px; }
+  .switch{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    border:1px solid var(--border); background:var(--card); border-radius:12px;
+    padding:11px; font-size:.9rem; cursor:pointer; user-select:none; transition:.15s;
+  }
+  .switch.on{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-d); font-weight:700; }
+  .switch.on.fav{ background:#F0E2DF; border-color:var(--heart); color:var(--heart); }
+
+  /* 標籤輸入 */
+  .tag-input{
+    display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+    border:1px solid var(--border); background:var(--card); border-radius:12px; padding:8px;
+  }
+  .tag-input input{ border:none; outline:none; flex:1; min-width:120px; font-size:.95rem; padding:4px; background:none; }
+  .tchip{ background:var(--accent-soft); color:var(--accent-d); font-size:.82rem; padding:4px 8px; border-radius:8px; display:inline-flex; gap:5px; align-items:center; }
+  .tchip b{ cursor:pointer; font-weight:700; }
+  .hint{ font-size:.74rem; color:var(--ink-2); margin-top:5px; }
+
+  .save-btn{
+    width:100%; border:none; background:var(--accent); color:#fff; font-size:1.05rem; font-weight:700;
+    padding:14px; border-radius:14px; cursor:pointer; margin-top:6px; box-shadow:var(--shadow);
+  }
+  .save-btn:active{ transform:scale(.98); }
+
+  /* 分類管理清單 */
+  .cat-list{ display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+  .cat-item{
+    display:flex; align-items:center; gap:10px; background:var(--card);
+    border:1px solid var(--border); border-radius:12px; padding:11px 14px;
+  }
+  .cat-item span{ flex:1; }
+  .cat-item .lock{ font-size:.72rem; color:var(--ink-2); }
+  .cat-item .rm{ border:none; background:none; color:var(--heart); font-size:1.1rem; cursor:pointer; }
+  .add-cat-row{ display:flex; gap:8px; }
+  .add-cat-row input{ flex:1; border:1px solid var(--border); border-radius:12px; padding:11px 13px; font-size:1rem; outline:none; }
+  .add-cat-row button{ border:none; background:var(--accent); color:#fff; border-radius:12px; padding:0 18px; font-weight:700; cursor:pointer; }
+
+  .toast{
+    position:fixed; left:50%; bottom:90px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:10px 20px; border-radius:999px; font-size:.9rem;
+    opacity:0; pointer-events:none; transition:.25s; z-index:99;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- 頁首 -->
+<header class="app">
+  <div class="wrap">
+    <div class="app-title"><span class="logo">📖</span> 智慧語錄收藏庫</div>
+    <div class="app-sub">收藏每一句打動你的智慧</div>
+    <div class="stats">
+      <div class="stat"><b id="statTotal">0</b><span>收藏總數</span></div>
+      <div class="stat"><b id="statFav">0</b><span>最愛語錄</span></div>
+      <div class="stat"><b id="statCat">0</b><span>分類數</span></div>
+    </div>
+    <div class="search-box">
+      <span class="ic">🔍</span>
+      <input type="text" id="search" placeholder="搜尋主句、備註、作者或標籤…">
+      <button class="clear" id="clearSearch">✕</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 分類篩選 -->
+  <div class="chips" id="chips"></div>
+
+  <!-- 標籤篩選提示 -->
+  <div class="tag-banner" id="tagBanner">
+    <span>🏷️ 篩選標籤：<b id="tagBannerName"></b></span>
+    <button id="tagClear">✕ 清除</button>
+  </div>
+
+  <!-- 內容 -->
+  <div id="content"></div>
+</div>
+
+<!-- 浮動新增 -->
+<button class="fab" id="fab" title="新增語錄">＋</button>
+
+<!-- 新增/編輯 Modal -->
+<div class="overlay" id="formOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2 id="formTitle">新增語錄</h2>
+      <button class="x" data-close>✕</button>
+    </div>
+
+    <div class="field">
+      <label>主句 <span class="req">*必填</span></label>
+      <textarea id="fMain" placeholder="收藏的核心文字，例如：水滴石穿"></textarea>
+    </div>
+    <div class="field">
+      <label>備註 <span class="req">*必填</span></label>
+      <textarea id="fNote" placeholder="對主句的說明、心得或補充"></textarea>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>分類</label>
+        <select id="fCat"></select>
+      </div>
+      <div class="field">
+        <label>收藏日期</label>
+        <input type="date" id="fDate">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tag 標籤</label>
+      <div class="tag-input" id="tagInputWrap">
+        <input type="text" id="fTagInput" placeholder="輸入後按 Enter 或逗號新增">
+      </div>
+      <div class="hint">例如：努力、人生、智慧、成功、自律</div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>作者</label>
+        <input type="text" id="fAuthor" placeholder="例如：孔子（可留空）">
+      </div>
+      <div class="field">
+        <label>出處</label>
+        <input type="text" id="fSource" placeholder="例如：論語（可留空）">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>我的心得</label>
+      <textarea id="fReflect" placeholder="這句話對你的意義…（可留空）"></textarea>
+    </div>
+
+    <div class="field">
+      <label>收藏標記</label>
+      <div class="switch-row">
+        <div class="switch fav" id="fFav">❤️ 加入最愛</div>
+        <div class="switch" id="fPin">📌 置頂</div>
+      </div>
+    </div>
+
+    <button class="save-btn" id="saveBtn">儲存收藏</button>
+  </div>
+</div>
+
+<!-- 分類管理 Modal -->
+<div class="overlay" id="catOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>管理分類</h2>
+      <button class="x" data-close-cat>✕</button>
+    </div>
+    <div class="cat-list" id="catList"></div>
+    <div class="add-cat-row">
+      <input type="text" id="newCatInput" placeholder="輸入新分類名稱">
+      <button id="addCatBtn">新增</button>
+    </div>
+    <div class="hint" style="margin-top:8px;">預設分類無法刪除；刪除自訂分類時，該分類的語錄會移到「佳句」。</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   智慧語錄收藏庫 — 資料以 LocalStorage 儲存於瀏覽器
+   ========================================================= */
+const STORE_KEY = 'wisdom_quotes_v1';
+const CAT_KEY   = 'wisdom_categories_v1';
+const DEFAULT_CATEGORIES = ['成語','名人語錄','宗教','網友金句','佳句'];
+
+let quotes = [];
+let categories = [];
+let editingId = null;
+let formTags = [];
+let state = { category:'all', tag:null, search:'', favOnly:false };
+
+/* ---------- 工具函式 ---------- */
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+const todayStr = () => { const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1600); }
+
+/* ---------- 儲存 / 讀取 ---------- */
+function save(){
+  localStorage.setItem(STORE_KEY, JSON.stringify(quotes));
+  localStorage.setItem(CAT_KEY, JSON.stringify(categories));
+}
+function load(){
+  try{ quotes = JSON.parse(localStorage.getItem(STORE_KEY)) || null; }catch(e){ quotes=null; }
+  try{ categories = JSON.parse(localStorage.getItem(CAT_KEY)) || null; }catch(e){ categories=null; }
+  if(!Array.isArray(categories)) categories = [...DEFAULT_CATEGORIES];
+  if(!Array.isArray(quotes)) quotes = seed();
+  save();
+}
+function seed(){
+  const d = todayStr();
+  return [
+    { id:uid(), main:'水滴石穿', note:'只要持續努力，小力量也能完成大目標。', category:'成語', tags:['努力','堅持'], author:'未知', source:'', reflect:'', date:d, favorite:true, pinned:true },
+    { id:uid(), main:'吾日三省吾身', note:'每天多次自我反省，才能不斷進步。', category:'成語', tags:['自律','反省'], author:'曾子', source:'論語', reflect:'', date:d, favorite:false, pinned:false },
+    { id:uid(), main:'知之為知之，不知為不知，是知也。', note:'誠實面對自己的所知與未知，才是真正的智慧。', category:'名人語錄', tags:['智慧','誠實'], author:'孔子', source:'論語', reflect:'', date:d, favorite:true, pinned:false },
+    { id:uid(), main:'今天的努力，是為了明天的自己。', note:'提醒自己現在的付出都不會白費。', category:'網友金句', tags:['努力','人生'], author:'網友', source:'', reflect:'每次想偷懶時看一下就有動力。', date:d, favorite:false, pinned:false },
+  ];
+}
+
+/* ---------- 篩選 ---------- */
+function isHome(){ return state.category==='all' && !state.tag && !state.search && !state.favOnly; }
+function filtered(){
+  let list = quotes.slice();
+  if(state.category!=='all') list = list.filter(q=>q.category===state.category);
+  if(state.tag) list = list.filter(q=>(q.tags||[]).includes(state.tag));
+  if(state.favOnly) list = list.filter(q=>q.favorite);
+  if(state.search){
+    const s = state.search.toLowerCase();
+    list = list.filter(q=>
+      (q.main||'').toLowerCase().includes(s) ||
+      (q.note||'').toLowerCase().includes(s) ||
+      (q.author||'').toLowerCase().includes(s) ||
+      (q.reflect||'').toLowerCase().includes(s) ||
+      (q.tags||[]).some(t=>t.toLowerCase().includes(s))
+    );
+  }
+  list.sort((a,b)=>{
+    if(!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;
+    return (b.date||'').localeCompare(a.date||'') || (b.id>a.id?1:-1);
+  });
+  return list;
+}
+
+/* ---------- 渲染 ---------- */
+function renderStats(){
+  $('#statTotal').textContent = quotes.length;
+  $('#statFav').textContent = quotes.filter(q=>q.favorite).length;
+  $('#statCat').textContent = categories.length;
+}
+function renderChips(){
+  const c = $('#chips');
+  let html = `<button class="chip ${state.category==='all'&&!state.favOnly?'active':''}" data-cat="all">全部</button>`;
+  html += `<button class="chip star ${state.favOnly?'active':''}" data-fav>⭐ 最愛</button>`;
+  categories.forEach(cat=>{
+    html += `<button class="chip ${state.category===cat?'active':''}" data-cat="${esc(cat)}">${esc(cat)}</button>`;
+  });
+  html += `<button class="chip manage" data-manage>⚙️ 管理分類</button>`;
+  c.innerHTML = html;
+}
+function cardHTML(q){
+  const tags = (q.tags||[]).map(t=>`<span class="tag" data-tag="${esc(t)}">#${esc(t)}</span>`).join('');
+  const meta = [];
+  if(q.author) meta.push(`<span class="m"><span>作者</span> ${esc(q.author)}</span>`);
+  if(q.source) meta.push(`<span class="m"><span>出處</span> ${esc(q.source)}</span>`);
+  if(q.date)   meta.push(`<span class="m"><span>收藏</span> ${esc(q.date)}</span>`);
+  return `
+  <article class="card ${q.pinned?'pinned':''}" data-id="${q.id}">
+    <div class="card-top">
+      <span class="badge">📂 ${esc(q.category)}${q.pinned?'<span class="pin-flag">· 置頂</span>':''}</span>
+      <div class="card-actions">
+        <button class="icon-btn ${q.favorite?'on':''}" data-act="fav" title="最愛">❤️</button>
+        <button class="icon-btn ${q.pinned?'on':''}" data-act="pin" title="置頂">📌</button>
+      </div>
+    </div>
+    <p class="quote">${esc(q.main)}</p>
+    ${q.note?`<p class="note">${esc(q.note)}</p>`:''}
+    ${q.reflect?`<div class="reflection">💭 ${esc(q.reflect)}</div>`:''}
+    ${tags?`<div class="tags">${tags}</div>`:''}
+    ${meta.length?`<div class="meta">${meta.join('')}</div>`:''}
+    <div class="card-foot">
+      <button data-act="edit">✏️ 編輯</button>
+      <button class="del" data-act="del">🗑️ 刪除</button>
+    </div>
+  </article>`;
+}
+function renderContent(){
+  const box = $('#content');
+  // 標籤提示
+  const tb = $('#tagBanner');
+  if(state.tag){ tb.style.display='flex'; $('#tagBannerName').textContent='#'+state.tag; }
+  else tb.style.display='none';
+
+  if(isHome()){
+    const favs = quotes.filter(q=>q.favorite).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    const recent = quotes.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.id>a.id?1:-1)).slice(0,8);
+    let html = '';
+    if(quotes.length===0){
+      html = emptyBlock('還沒有收藏', '點右下角的 ＋ 新增你的第一句語錄吧！');
+    } else {
+      if(favs.length){
+        html += `<div class="section-title">⭐ 最愛語錄 <span class="count">${favs.length} 筆</span></div>`;
+        html += favs.slice(0,6).map(cardHTML).join('');
+      }
+      html += `<div class="section-title">🕐 最近新增 <span class="count">共 ${quotes.length} 筆</span></div>`;
+      html += recent.map(cardHTML).join('');
+    }
+    box.innerHTML = html;
+  } else {
+    const list = filtered();
+    let head = '📋 篩選結果';
+    if(state.favOnly) head = '⭐ 最愛語錄';
+    else if(state.tag) head = '🏷️ 標籤：#'+esc(state.tag);
+    else if(state.category!=='all') head = '📂 '+esc(state.category);
+    else if(state.search) head = '🔍 搜尋結果';
+    let html = `<div class="section-title">${head} <span class="count">${list.length} 筆</span></div>`;
+    html += list.length ? list.map(cardHTML).join('') : emptyBlock('找不到符合的語錄','試試其他關鍵字或分類');
+    box.innerHTML = html;
+  }
+}
+function emptyBlock(t,s){ return `<div class="empty"><span class="em">📭</span><b>${esc(t)}</b><br><span style="font-size:.88rem">${esc(s)}</span></div>`; }
+
+function renderAll(){ renderStats(); renderChips(); renderContent(); }
+
+/* ---------- 表單 ---------- */
+function openForm(q){
+  editingId = q ? q.id : null;
+  $('#formTitle').textContent = q ? '編輯語錄' : '新增語錄';
+  // 分類選單
+  const sel = $('#fCat');
+  sel.innerHTML = categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  // 帶入資料
+  $('#fMain').value    = q ? q.main : '';
+  $('#fNote').value    = q ? q.note : '';
+  $('#fAuthor').value  = q ? (q.author||'') : '';
+  $('#fSource').value  = q ? (q.source||'') : '';
+  $('#fReflect').value = q ? (q.reflect||'') : '';
+  $('#fDate').value    = q ? (q.date||todayStr()) : todayStr();
+  sel.value = q ? q.category : (state.category!=='all'?state.category:categories[0]);
+  formTags = q ? [...(q.tags||[])] : [];
+  renderFormTags();
+  $('#fFav').classList.toggle('on', q ? !!q.favorite : false);
+  $('#fPin').classList.toggle('on', q ? !!q.pinned : false);
+  $('#formOverlay').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeForm(){ $('#formOverlay').classList.remove('show'); document.body.style.overflow=''; }
+
+function renderFormTags(){
+  const wrap = $('#tagInputWrap');
+  wrap.querySelectorAll('.tchip').forEach(e=>e.remove());
+  const input = $('#fTagInput');
+  formTags.forEach((t,i)=>{
+    const el = document.createElement('span');
+    el.className='tchip';
+    el.innerHTML = `#${esc(t)} <b data-i="${i}">✕</b>`;
+    wrap.insertBefore(el, input);
+  });
+}
+function addTag(raw){
+  raw.split(/[,，、\s]+/).map(t=>t.trim().replace(/^#/,'')).filter(Boolean).forEach(t=>{
+    if(!formTags.includes(t)) formTags.push(t);
+  });
+  renderFormTags();
+}
+function saveForm(){
+  const main = $('#fMain').value.trim();
+  const note = $('#fNote').value.trim();
+  if(!main){ toast('請填寫「主句」'); $('#fMain').focus(); return; }
+  if(!note){ toast('請填寫「備註」'); $('#fNote').focus(); return; }
+  // 尚未送出的標籤也一併加入
+  const pending = $('#fTagInput').value.trim();
+  if(pending) addTag(pending);
+  $('#fTagInput').value='';
+
+  const data = {
+    main, note,
+    category: $('#fCat').value,
+    tags: [...formTags],
+    author: $('#fAuthor').value.trim(),
+    source: $('#fSource').value.trim(),
+    reflect: $('#fReflect').value.trim(),
+    date: $('#fDate').value || todayStr(),
+    favorite: $('#fFav').classList.contains('on'),
+    pinned: $('#fPin').classList.contains('on'),
+  };
+  if(editingId){
+    const i = quotes.findIndex(q=>q.id===editingId);
+    quotes[i] = { ...quotes[i], ...data };
+    toast('已更新');
+  }else{
+    quotes.unshift({ id:uid(), ...data });
+    toast('已新增收藏');
+  }
+  save(); renderAll(); closeForm();
+}
+
+/* ---------- 分類管理 ---------- */
+function openCat(){ renderCatList(); $('#catOverlay').classList.add('show'); document.body.style.overflow='hidden'; }
+function closeCat(){ $('#catOverlay').classList.remove('show'); document.body.style.overflow=''; }
+function renderCatList(){
+  $('#catList').innerHTML = categories.map(c=>{
+    const isDefault = DEFAULT_CATEGORIES.includes(c);
+    const n = quotes.filter(q=>q.category===c).length;
+    return `<div class="cat-item">
+      <span>📂 ${esc(c)} <small style="color:var(--ink-2)">（${n}）</small></span>
+      ${isDefault?'<span class="lock">預設</span>':`<button class="rm" data-rmcat="${esc(c)}">🗑️</button>`}
+    </div>`;
+  }).join('');
+}
+function addCategory(){
+  const v = $('#newCatInput').value.trim();
+  if(!v){ toast('請輸入分類名稱'); return; }
+  if(categories.includes(v)){ toast('分類已存在'); return; }
+  categories.push(v);
+  $('#newCatInput').value='';
+  save(); renderCatList(); renderChips(); renderStats();
+  toast('已新增分類');
+}
+function removeCategory(name){
+  if(DEFAULT_CATEGORIES.includes(name)) return;
+  if(!confirm(`確定刪除分類「${name}」？該分類的語錄會移到「佳句」。`)) return;
+  quotes.forEach(q=>{ if(q.category===name) q.category='佳句'; });
+  categories = categories.filter(c=>c!==name);
+  if(state.category===name) state.category='all';
+  save(); renderCatList(); renderAll();
+  toast('已刪除分類');
+}
+
+/* ---------- 事件綁定 ---------- */
+// 搜尋
+$('#search').addEventListener('input', e=>{
+  state.search = e.target.value.trim();
+  $('#clearSearch').style.display = state.search ? 'block':'none';
+  renderContent();
+});
+$('#clearSearch').addEventListener('click', ()=>{
+  $('#search').value=''; state.search=''; $('#clearSearch').style.display='none'; renderContent();
+});
+
+// 分類 / 最愛 / 管理 chips
+$('#chips').addEventListener('click', e=>{
+  const catBtn = e.target.closest('[data-cat]');
+  const favBtn = e.target.closest('[data-fav]');
+  const mng    = e.target.closest('[data-manage]');
+  if(mng){ openCat(); return; }
+  if(favBtn){ state.favOnly = !state.favOnly; if(state.favOnly){ state.category='all'; state.tag=null; } renderAll(); return; }
+  if(catBtn){ state.category = catBtn.dataset.cat; state.favOnly=false; state.tag=null; renderAll(); }
+});
+
+// 標籤清除
+$('#tagClear').addEventListener('click', ()=>{ state.tag=null; renderContent(); });
+
+// 內容區委派（卡片動作 + 標籤點擊）
+$('#content').addEventListener('click', e=>{
+  const tagEl = e.target.closest('.tag');
+  if(tagEl){ state.tag = tagEl.dataset.tag; state.category='all'; state.favOnly=false; window.scrollTo({top:0,behavior:'smooth'}); renderContent(); return; }
+  const card = e.target.closest('.card'); if(!card) return;
+  const id = card.dataset.id;
+  const q = quotes.find(x=>x.id===id); if(!q) return;
+  const act = e.target.closest('[data-act]')?.dataset.act; if(!act) return;
+  if(act==='fav'){ q.favorite=!q.favorite; save(); renderAll(); }
+  else if(act==='pin'){ q.pinned=!q.pinned; save(); renderAll(); toast(q.pinned?'已置頂':'已取消置頂'); }
+  else if(act==='edit'){ openForm(q); }
+  else if(act==='del'){ if(confirm('確定刪除這筆收藏？')){ quotes=quotes.filter(x=>x.id!==id); save(); renderAll(); toast('已刪除'); } }
+});
+
+// 新增
+$('#fab').addEventListener('click', ()=>openForm(null));
+$('#saveBtn').addEventListener('click', saveForm);
+$$('[data-close]').forEach(b=>b.addEventListener('click', closeForm));
+$('#formOverlay').addEventListener('click', e=>{ if(e.target.id==='formOverlay') closeForm(); });
+
+// 最愛 / 置頂 開關
+$('#fFav').addEventListener('click', function(){ this.classList.toggle('on'); });
+$('#fPin').addEventListener('click', function(){ this.classList.toggle('on'); });
+
+// 標籤輸入
+$('#fTagInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter' || e.key===',' || e.key==='，'){ e.preventDefault(); addTag(e.target.value); e.target.value=''; }
+  else if(e.key==='Backspace' && !e.target.value && formTags.length){ formTags.pop(); renderFormTags(); }
+});
+$('#tagInputWrap').addEventListener('click', e=>{
+  const b=e.target.closest('b[data-i]');
+  if(b){ formTags.splice(+b.dataset.i,1); renderFormTags(); }
+  else $('#fTagInput').focus();
+});
+
+// 分類管理
+$('[data-close-cat]').addEventListener('click', closeCat);
+$('#catOverlay').addEventListener('click', e=>{ if(e.target.id==='catOverlay') closeCat(); });
+$('#addCatBtn').addEventListener('click', addCategory);
+$('#newCatInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addCategory(); });
+$('#catList').addEventListener('click', e=>{ const b=e.target.closest('[data-rmcat]'); if(b) removeCategory(b.dataset.rmcat); });
+
+/* ---------- 啟動 ---------- */
+load();
+renderAll();
+</script>
+</body>
+</html>
